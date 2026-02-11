@@ -2,8 +2,8 @@
 
 ## 1. Problem Statement
 
-The objective of this project is to predict whether a user browsing an e-commerce website will complete a purchase or not.
-This is as a binary classification problem where the target variable is **Revenue** (1 = Purchase, 0 = No Purchase).
+The goal of this project is to forecast if the user of an online shopping site will buy a product or not.
+The problem is as a binary classification problem, in which the target variable of interest is **Revenue**—where 1 represents **Purchase** and 0 represents **No Purchase**.
 
 ---
 
@@ -15,7 +15,7 @@ This is as a binary classification problem where the target variable is **Revenu
 - Number of Features: 17 input features + 1 target variable
 - Target Variable: Revenue (True/False)
 
-The dataset contains information about user browsing behavior such as page visits, duration spent on pages, bounce rates, exit rates, month of visit, visitor type, and other session-level attributes.
+The data set appears to include information on the browsing patterns of users, such as visits to pages, the duration of time spent on specific pages, the percentage of visits with high bounce rates, exit rates, the month of the visit, type of visitors, etc.
 
 ---
 
@@ -37,3 +37,23 @@ Evaluation Metrics used are as follows:
 4. Recall
 5. F1 Score
 6. Matthews Correlation Coeffi cient (MCC Score)
+
+---
+
+## 4. Model Performance Comparison
+
+| Model                | Accuracy | AUC    | Precision | Recall  | F1 Score | MCC    |
+|----------------------|----------|--------|-----------|---------|----------|--------|
+| Logistic Regression  | 0.8832   | 0.8653 | 0.7640    | 0.3560  | 0.4857   | 0.4696 |
+| Decision Tree        | 0.8528   | 0.7290 | 0.5237    | 0.5497  | 0.5364   | 0.4492 |
+| K-Nearest Neighbors  | 0.8678   | 0.7888 | 0.6217    | 0.3743  | 0.4673   | 0.4138 |
+
+---
+
+## 5. Observations
+
+- Logistic Regression achieved the highest AUC score, indicating strong probability estimation capability.
+- Decision Tree provided better recall compared to other models, meaning it captured more actual positive purchase cases.
+- KNN showed balanced but moderate performance.
+- The dataset appears to be slightly imbalanced, affecting recall performance in some models.
+- Further improvement can be achieved using ensemble models such as Random Forest and XGBoost.
