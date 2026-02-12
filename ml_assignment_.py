@@ -149,3 +149,73 @@ print("Recall:", round(knn_recall, 4))
 print("F1 Score:", round(knn_f1, 4))
 print("MCC:", round(knn_mcc, 4))
 
+from sklearn.ensemble import RandomForestClassifier
+
+# Initialize Random Forest
+rf_model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=None,
+    random_state=42
+)
+
+# Train model
+rf_model.fit(X_train, y_train)
+
+# Predictions
+y_pred_rf = rf_model.predict(X_test)
+
+# Probability predictions (for AUC)
+y_prob_rf = rf_model.predict_proba(X_test)[:, 1]
+
+rf_accuracy = accuracy_score(y_test, y_pred_rf)
+rf_auc = roc_auc_score(y_test, y_prob_rf)
+rf_precision = precision_score(y_test, y_pred_rf)
+rf_recall = recall_score(y_test, y_pred_rf)
+rf_f1 = f1_score(y_test, y_pred_rf)
+rf_mcc = matthews_corrcoef(y_test, y_pred_rf)
+
+print("Random Forest Performance:")
+print("Accuracy:", round(rf_accuracy, 4))
+print("AUC:", round(rf_auc, 4))
+print("Precision:", round(rf_precision, 4))
+print("Recall:", round(rf_recall, 4))
+print("F1 Score:", round(rf_f1, 4))
+print("MCC:", round(rf_mcc, 4))
+
+!pip install xgboost
+from xgboost import XGBClassifier
+
+# Initialize XGBoost model
+xgb_model = XGBClassifier(
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5,
+    random_state=42,
+    use_label_encoder=False,
+    eval_metric='logloss'
+)
+
+# Train model
+xgb_model.fit(X_train, y_train)
+
+# Predictions
+y_pred_xgb = xgb_model.predict(X_test)
+
+# Probability predictions
+y_prob_xgb = xgb_model.predict_proba(X_test)[:, 1]
+
+xgb_accuracy = accuracy_score(y_test, y_pred_xgb)
+xgb_auc = roc_auc_score(y_test, y_pred_xgb)
+xgb_precision = precision_score(y_test, y_pred_xgb)
+xgb_recall = recall_score(y_test, y_pred_xgb)
+xgb_f1 = f1_score(y_test, y_pred_xgb)
+xgb_mcc = matthews_corrcoef(y_test, y_pred_xgb)
+
+print("XGBoost Performance:")
+print("Accuracy:", round(xgb_accuracy, 4))
+print("AUC:", round(xgb_auc, 4))
+print("Precision:", round(xgb_precision, 4))
+print("Recall:", round(xgb_recall, 4))
+print("F1 Score:", round(xgb_f1, 4))
+print("MCC:", round(xgb_mcc, 4))
+
