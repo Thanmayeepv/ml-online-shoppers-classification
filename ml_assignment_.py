@@ -205,7 +205,7 @@ y_pred_xgb = xgb_model.predict(X_test)
 y_prob_xgb = xgb_model.predict_proba(X_test)[:, 1]
 
 xgb_accuracy = accuracy_score(y_test, y_pred_xgb)
-xgb_auc = roc_auc_score(y_test, y_pred_xgb)
+xgb_auc = roc_auc_score(y_test, y_prob_xgb)
 xgb_precision = precision_score(y_test, y_pred_xgb)
 xgb_recall = recall_score(y_test, y_pred_xgb)
 xgb_f1 = f1_score(y_test, y_pred_xgb)
