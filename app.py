@@ -32,14 +32,29 @@ Browser = st.number_input("Browser", min_value=0)
 Region = st.number_input("Region", min_value=0)
 TrafficType = st.number_input("Traffic Type", min_value=0)
 
-le_month = LabelEncoder()
-le_month.fit(["Feb","Mar","May","June","Jul","Aug","Sep","Oct","Nov","Dec"])
-Month = le_month.transform([Month_input])[0]
+month_mapping = {
+    "Feb": 0,
+    "Mar": 1,
+    "May": 2,
+    "June": 3,
+    "Jul": 4,
+    "Aug": 5,
+    "Sep": 6,
+    "Oct": 7,
+    "Nov": 8,
+    "Dec": 9
+}
 
-le_visitor = LabelEncoder()
-le_visitor.fit(["New_Visitor", "Returning_Visitor", "Other"])
-VisitorType = le_visitor.transform([Visitor_input])[0]
+visitor_mapping = {
+    "New_Visitor": 0,
+    "Returning_Visitor": 1,
+    "Other": 2
+}
 
+Month = month_mapping[Month_input]
+VisitorType = visitor_mapping[Visitor_input]
+
+Weekend = 1 if Weekend_input == "Yes" else 0
 Weekend = 1 if Weekend_input == "Yes" else 0
 
 if st.button("Predict"):
