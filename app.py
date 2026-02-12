@@ -17,7 +17,7 @@ st.sidebar.header("Model Selection")
 
 model_option = st.sidebar.selectbox(
     "Choose a Model",
-    ("XGBoost", "Logistic Regression", "Decision Tree", "KNN")
+    ("XGBoost", "Logistic Regression", "Decision Tree", "KNN","Naive Bayes")
 )
 
 if model_option == "XGBoost":
@@ -26,6 +26,8 @@ elif model_option == "Logistic Regression":
     model = joblib.load("logistic_model.pkl")
 elif model_option == "Decision Tree":
     model = joblib.load("decision_tree_model.pkl")
+elif model_option == "Naive Bayes":
+    model = joblib.load("naive_bayes_model.pkl")
 else:
     model = joblib.load("knn_model.pkl")
 
