@@ -1,90 +1,80 @@
 import streamlit as st
+import pandas as pd
 import joblib
 import numpy as np
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Load trained model
-model = joblib.load("xgboost_model.pkl")
+st.set_page_config(page_title="Online Shoppers Purchase Prediction")
 
-st.title("Online Shopper Purchase Prediction")
-st.write("Predict whether a user will complete a purchase.")
+st.title("Online Shoppers Purchasing Intention Prediction")
 
-st.header("Enter Session Details")
+# -----------------------------
+# Model Selection
+# -----------------------------
+st.sidebar.header("Model Selection")
 
-# ---------------- NUMERIC INPUTS ----------------
-Administrative = st.number_input("Administrative Pages", min_value=0)
-Administrative_Duration = st.number_input("Administrative Duration", min_value=0.0)
-Informational = st.number_input("Informational Pages", min_value=0)
-Informational_Duration = st.number_input("Informational Duration", min_value=0.0)
-ProductRelated = st.number_input("Product Related Pages", min_value=0)
-ProductRelated_Duration = st.number_input("Product Related Duration", min_value=0.0)
-BounceRates = st.number_input("Bounce Rates", min_value=0.0, max_value=1.0)
-ExitRates = st.number_input("Exit Rates", min_value=0.0, max_value=1.0)
-PageValues = st.number_input("Page Values", min_value=0.0)
-SpecialDay = st.number_input("Special Day", min_value=0.0, max_value=1.0)
+model_option = st.sidebar.selectbox(
+    "Choose a Model",
+    ("XGBoost", "Logistic Regression", "Decision Tree", "KNN")
+)
 
-OperatingSystems = st.number_input("Operating Systems", min_value=1)
-Browser = st.number_input("Browser", min_value=1)
-Region = st.number_input("Region", min_value=1)
-TrafficType = st.number_input("Traffic Type", min_value=1)
+if model_option == "XGBoost":
+    model = joblib.load("xgboost_model.pkl")
+elif model_option == "Logistic Regression":
+    model = joblib.load("logistic_model.pkl")
+elif model_option == "Decision Tree":
+    model = joblib.load("decision_tree_model.pkl")
+else:
+    model = joblib.load("knn_model.pkl")
 
-# ---------------- CATEGORICAL INPUTS ----------------
-month_options = ["Feb","Mar","May","June","Jul","Aug","Sep","Oct","Nov","Dec"]
-Month_input = st.selectbox("Month", month_options)
+st.sidebar.success(f"{model_option} Loaded Successfully")
 
-visitor_options = ["New_Visitor", "Returning_Visitor", "Other"]
-Visitor_input = st.selectbox("Visitor Type", visitor_options)
+# -----------------------------
+# Dataset Upload
+# -----------------------------
+st.header("Upload Test Dataset (CSV)")
 
-Weekend_input = st.selectbox("Weekend", ["No", "Yes"])
+uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
-# ---------------- MANUAL ENCODING ----------------
-month_mapping = {
-    "Feb": 0,
-    "Mar": 1,
-    "May": 2,
-    "June": 3,
-    "Jul": 4,
-    "Aug": 5,
-    "Sep": 6,
-    "Oct": 7,
-    "Nov": 8,
-    "Dec": 9
-}
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+    st.write("Preview of Uploaded Data:")
+    st.dataframe(data.head())
 
-visitor_mapping = {
-    "New_Visitor": 0,
-    "Returning_Visitor": 1,
-    "Other": 2
-}
-
-Month = month_mapping[Month_input]
-VisitorType = visitor_mapping[Visitor_input]
-Weekend = 1 if Weekend_input == "Yes" else 0
-
-# ---------------- PREDICTION ----------------
-if st.button("Predict"):
-
-    input_data = np.array([[Administrative,
-                            Administrative_Duration,
-                            Informational,
-                            Informational_Duration,
-                            ProductRelated,
-                            ProductRelated_Duration,
-                            BounceRates,
-                            ExitRates,
-                            PageValues,
-                            SpecialDay,
-                            Month,
-                            OperatingSystems,
-                            Browser,
-                            Region,
-                            TrafficType,
-                            VisitorType,
-                            Weekend]])
-
-    prediction = model.predict(input_data)
-    probability = model.predict_proba(input_data)[0][1]
-
-    if prediction[0] == 1:
-        st.success(f" Likely to complete purchase (Probability: {probability:.2f})")
+    if "Revenue" not in data.columns:
+        st.error("CSV must contain 'Revenue' column as target.")
     else:
-        st.error(f" Unlikely to complete purchase (Probability: {probability:.2f})")
+        X = data.drop("Revenue", axis=1)
+        y = data["Revenue"]
+
+        y_pred = model.predict(X)
+
+        # -----------------------------
+        # Evaluation Metrics
+        # -----------------------------
+        st.header("Model Evaluation Metrics")
+
+        accuracy = accuracy_score(y, y_pred)
+        st.write(f"**Accuracy:** {accuracy:.4f}")
+
+        st.subheader("Classification Report")
+        report = classification_report(y, y_pred)
+        st.text(report)
+
+        # -----------------------------
+        # Confusion Matrix
+        # -----------------------------
+        st.subheader("Confusion Matrix")
+
+        cm = confusion_matrix(y, y_pred)
+
+        fig, ax = plt.subplots()
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax)
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        st.pyplot(fig)
+
+else:
+    st.info("Please upload a test CSV file to evaluate the model.")
