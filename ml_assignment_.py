@@ -149,6 +149,31 @@ print("Recall:", round(knn_recall, 4))
 print("F1 Score:", round(knn_f1, 4))
 print("MCC:", round(knn_mcc, 4))
 
+from sklearn.naive_bayes import GaussianNB
+
+nb_model = GaussianNB()
+
+nb_model.fit(X_train, y_train)
+
+y_pred_nb = nb_model.predict(X_test)
+
+y_prob_nb = nb_model.predict_proba(X_test)[:, 1]
+
+nb_accuracy = accuracy_score(y_test, y_pred_nb)
+nb_auc = roc_auc_score(y_test, y_prob_nb)
+nb_precision = precision_score(y_test, y_pred_nb)
+nb_recall = recall_score(y_test, y_pred_nb)
+nb_f1 = f1_score(y_test, y_pred_nb)
+nb_mcc = matthews_corrcoef(y_test, y_pred_nb)
+
+print("Naive Bayes Performance:")
+print("Accuracy:", round(nb_accuracy, 4))
+print("AUC:", round(nb_auc, 4))
+print("Precision:", round(nb_precision, 4))
+print("Recall:", round(nb_recall, 4))
+print("F1 Score:", round(nb_f1, 4))
+print("MCC:", round(nb_mcc, 4))
+
 from sklearn.ensemble import RandomForestClassifier
 
 # Initialize Random Forest
@@ -216,8 +241,3 @@ print("Precision:", round(xgb_precision, 4))
 print("Recall:", round(xgb_recall, 4))
 print("F1 Score:", round(xgb_f1, 4))
 print("MCC:", round(xgb_mcc, 4))
-
-import joblib
-
-joblib.dump(xgb_model, "xgboost_model.pkl")
-
