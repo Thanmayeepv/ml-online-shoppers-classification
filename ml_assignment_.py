@@ -185,17 +185,15 @@ print("MCC:", round(rf_mcc, 4))
 !pip install xgboost
 from xgboost import XGBClassifier
 
-# Initialize XGBoost model
+scale_pos_weight = len(y_train[y_train == 0]) / len(y_train[y_train == 1])
+
 xgb_model = XGBClassifier(
-    n_estimators=100,
-    learning_rate=0.1,
-    max_depth=5,
     random_state=42,
     use_label_encoder=False,
-    eval_metric='logloss'
+    eval_metric='logloss',
+    scale_pos_weight=scale_pos_weight
 )
 
-# Train model
 xgb_model.fit(X_train, y_train)
 
 # Predictions
@@ -205,7 +203,7 @@ y_pred_xgb = xgb_model.predict(X_test)
 y_prob_xgb = xgb_model.predict_proba(X_test)[:, 1]
 
 xgb_accuracy = accuracy_score(y_test, y_pred_xgb)
-xgb_auc = roc_auc_score(y_test, y_prob_xgb)
+xgb_auc = roc_auc_score(y_test, y_pred_xgb)
 xgb_precision = precision_score(y_test, y_pred_xgb)
 xgb_recall = recall_score(y_test, y_pred_xgb)
 xgb_f1 = f1_score(y_test, y_pred_xgb)
@@ -218,4 +216,8 @@ print("Precision:", round(xgb_precision, 4))
 print("Recall:", round(xgb_recall, 4))
 print("F1 Score:", round(xgb_f1, 4))
 print("MCC:", round(xgb_mcc, 4))
+
+import joblib
+
+joblib.dump(xgb_model, "xgboost_model.pkl")
 
