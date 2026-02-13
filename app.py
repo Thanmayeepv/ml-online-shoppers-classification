@@ -28,6 +28,8 @@ elif model_option == "Decision Tree":
     model = joblib.load("model/decision_tree_model.pkl")
 elif model_option == "Naive Bayes":
     model = joblib.load("model/naive_bayes_model.pkl")
+elif model_option == "Random Forest":
+    model = joblib.load("model/Random_Forest_model.pkl")
 else:
     model = joblib.load("model/knn_model.pkl")
 
