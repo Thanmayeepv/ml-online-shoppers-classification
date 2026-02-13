@@ -21,15 +21,15 @@ model_option = st.sidebar.selectbox(
 )
 
 if model_option == "XGBoost":
-    model = joblib.load("xgboost_model.pkl")
+    model = joblib.load("model/xgboost_model.pkl")
 elif model_option == "Logistic Regression":
-    model = joblib.load("logistic_model.pkl")
+    model = joblib.load("model/logistic_model.pkl")
 elif model_option == "Decision Tree":
-    model = joblib.load("decision_tree_model.pkl")
+    model = joblib.load("model/decision_tree_model.pkl")
 elif model_option == "Naive Bayes":
-    model = joblib.load("naive_bayes_model.pkl")
+    model = joblib.load("model/naive_bayes_model.pkl")
 else:
-    model = joblib.load("knn_model.pkl")
+    model = joblib.load("model/knn_model.pkl")
 
 st.sidebar.success(f"{model_option} Loaded Successfully")
 
