@@ -1,84 +1,150 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import numpy as np
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import seaborn as sns
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix,
+)
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-st.set_page_config(page_title="Online Shoppers Purchase Prediction")
-
-st.title("Online Shoppers Purchasing Intention Prediction")
-
-# -----------------------------
-# Model Selection
-# -----------------------------
-st.sidebar.header("Model Selection")
-
-model_option = st.sidebar.selectbox(
-    "Choose a Model",
-    ("XGBoost", "Logistic Regression", "Decision Tree", "KNN","Naive Bayes")
+# -----------------------------------------------------
+# Page Configuration
+# -----------------------------------------------------
+st.set_page_config(
+    page_title="Online Shopper Purchase Predictor",
+    page_icon="🛍️",
+    layout="wide"
 )
 
-if model_option == "XGBoost":
-    model = joblib.load("model/xgboost_model.pkl")
-elif model_option == "Logistic Regression":
-    model = joblib.load("model/logistic_model.pkl")
-elif model_option == "Decision Tree":
-    model = joblib.load("model/decision_tree_model.pkl")
-elif model_option == "Naive Bayes":
-    model = joblib.load("model/naive_bayes_model.pkl")
-elif model_option == "Random Forest":
-    model = joblib.load("model/Random_Forest_model.pkl")
-else:
-    model = joblib.load("model/knn_model.pkl")
+# -----------------------------------------------------
+# Custom Styling (Clean & Minimal)
+# -----------------------------------------------------
+st.markdown("""
+<style>
+.main-title {
+    font-size: 34px;
+    font-weight: bold;
+    color: #2E4053;
+}
+.section-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1F618D;
+}
+.metric-box {
+    background-color: #F4F6F7;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+.footer {
+    text-align: center;
+    font-size: 14px;
+    color: gray;
+}
+</style>
+""", unsafe_allow_html=True)
 
-st.sidebar.success(f"{model_option} Loaded Successfully")
+st.markdown('<p class="main-title">🛒 Online Shopper Purchase Prediction</p>', unsafe_allow_html=True)
+st.write("Upload your test dataset and evaluate different machine learning models.")
 
-# -----------------------------
-# Dataset Upload
-# -----------------------------
-st.header("Upload Test Dataset (CSV)")
+st.markdown("---")
 
-uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+# -----------------------------------------------------
+# Sidebar - Model Selection (Requirement b)
+# -----------------------------------------------------
+st.sidebar.header("⚙ Model Selection")
+
+model_choice = st.sidebar.selectbox(
+    "Select a Model",
+    [
+        "Logistic Regression",
+        "Decision Tree",
+        "Random Forest",
+        "KNN",
+        "Naive Bayes",
+        "XGBoost"
+    ]
+)
+
+# Load selected model
+model_paths = {
+    "Logistic Regression": "model/logistic_model.pkl",
+    "Decision Tree": "model/decision_tree_model.pkl",
+    "Random Forest": "model/random_forest_model.pkl",
+    "KNN": "model/knn_model.pkl",
+    "Naive Bayes": "model/naive_bayes_model.pkl",
+    "XGBoost": "model/xgboost_model.pkl",
+}
+
+model = joblib.load(model_paths[model_choice])
+st.sidebar.success(f"{model_choice} model loaded successfully.")
+
+# -----------------------------------------------------
+# Dataset Upload (Requirement a)
+# -----------------------------------------------------
+st.markdown('<p class="section-title">📂 Upload Test Dataset (CSV)</p>', unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "Upload only test dataset (CSV format)",
+    type=["csv"]
+)
 
 if uploaded_file is not None:
     data = pd.read_csv(uploaded_file)
-    st.write("Preview of Uploaded Data:")
+
+    st.write("### Preview of Uploaded Data")
     st.dataframe(data.head())
 
     if "Revenue" not in data.columns:
-        st.error("CSV must contain 'Revenue' column as target.")
+        st.error("The dataset must contain a 'Revenue' column as the target variable.")
     else:
         X = data.drop("Revenue", axis=1)
         y = data["Revenue"]
 
-        y_pred = model.predict(X)
+        predictions = model.predict(X)
 
-        # -----------------------------
-        # Evaluation Metrics
-        # -----------------------------
-        st.header("Model Evaluation Metrics")
+        # -----------------------------------------------------
+        # Evaluation Metrics (Requirement c)
+        # -----------------------------------------------------
+        st.markdown('<p class="section-title">📊 Evaluation Metrics</p>', unsafe_allow_html=True)
 
-        accuracy = accuracy_score(y, y_pred)
-        st.write(f"**Accuracy:** {accuracy:.4f}")
+        acc = accuracy_score(y, predictions)
+        prec = precision_score(y, predictions)
+        rec = recall_score(y, predictions)
+        f1 = f1_score(y, predictions)
 
-        st.subheader("Classification Report")
-        report = classification_report(y, y_pred)
-        st.text(report)
+        col1, col2, col3, col4 = st.columns(4)
 
-        # -----------------------------
-        # Confusion Matrix
-        # -----------------------------
-        st.subheader("Confusion Matrix")
+        col1.metric("Accuracy", f"{acc:.4f}")
+        col2.metric("Precision", f"{prec:.4f}")
+        col3.metric("Recall", f"{rec:.4f}")
+        col4.metric("F1 Score", f"{f1:.4f}")
 
-        cm = confusion_matrix(y, y_pred)
+        # -----------------------------------------------------
+        # Confusion Matrix (Requirement d)
+        # -----------------------------------------------------
+        st.markdown('<p class="section-title">📌 Confusion Matrix</p>', unsafe_allow_html=True)
+
+        cm = confusion_matrix(y, predictions)
 
         fig, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax)
-        plt.xlabel("Predicted")
+        sns.heatmap(
+            cm,
+            annot=True,
+            fmt="d",
+            cmap="Blues",
+            xticklabels=["Predicted: No", "Predicted: Yes"],
+            yticklabels=["Actual: No", "Actual: Yes"],
+            ax=ax
+        )
         plt.ylabel("Actual")
+        plt.xlabel("Predicted")
         st.pyplot(fig)
 
 else:
-    st.info("Please upload a test CSV file to evaluate the model.")
+    st.info("Please upload a CSV test dataset to evaluate the selected model.")
