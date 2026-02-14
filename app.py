@@ -6,8 +6,11 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
     f1_score,
+    roc_auc_score,
+    matthews_corrcoef,
     confusion_matrix,
 )
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -94,6 +97,7 @@ if uploaded_file is not None:
         X = data.drop("Revenue", axis=1)
         y = data["Revenue"]
 
+        predictions = model.predict(X)
         probabilities = model.predict_proba(X)[:, 1]
         
         st.markdown('<p class="section-title">📊 Evaluation Metrics</p>', unsafe_allow_html=True)
