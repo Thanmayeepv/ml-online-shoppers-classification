@@ -11,18 +11,12 @@ from sklearn.metrics import (
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# -----------------------------------------------------
-# Page Configuration
-# -----------------------------------------------------
 st.set_page_config(
     page_title="Online Shopper Purchase Predictor",
     page_icon="🛍️",
     layout="wide"
 )
 
-# -----------------------------------------------------
-# Custom Styling (Clean & Minimal)
-# -----------------------------------------------------
 st.markdown("""
 <style>
 .main-title {
@@ -54,9 +48,6 @@ st.write("Upload your test dataset and evaluate different machine learning model
 
 st.markdown("---")
 
-# -----------------------------------------------------
-# Sidebar - Model Selection (Requirement b)
-# -----------------------------------------------------
 st.sidebar.header("⚙ Model Selection")
 
 model_choice = st.sidebar.selectbox(
@@ -84,9 +75,6 @@ model_paths = {
 model = joblib.load(model_paths[model_choice])
 st.sidebar.success(f"{model_choice} model loaded successfully.")
 
-# -----------------------------------------------------
-# Dataset Upload (Requirement a)
-# -----------------------------------------------------
 st.markdown('<p class="section-title">📂 Upload Test Dataset (CSV)</p>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader(
@@ -106,28 +94,28 @@ if uploaded_file is not None:
         X = data.drop("Revenue", axis=1)
         y = data["Revenue"]
 
-        predictions = model.predict(X)
-
-        # -----------------------------------------------------
-        # Evaluation Metrics (Requirement c)
-        # -----------------------------------------------------
+        probabilities = model.predict_proba(X)[:, 1]
+        
         st.markdown('<p class="section-title">📊 Evaluation Metrics</p>', unsafe_allow_html=True)
 
         acc = accuracy_score(y, predictions)
         prec = precision_score(y, predictions)
         rec = recall_score(y, predictions)
         f1 = f1_score(y, predictions)
-
-        col1, col2, col3, col4 = st.columns(4)
-
+        auc = roc_auc_score(y, probabilities)
+        mcc = matthews_corrcoef(y, predictions)
+        
+        col1, col2, col3 = st.columns(3)
+        col4, col5, col6 = st.columns(3)
+        
         col1.metric("Accuracy", f"{acc:.4f}")
         col2.metric("Precision", f"{prec:.4f}")
         col3.metric("Recall", f"{rec:.4f}")
+        
         col4.metric("F1 Score", f"{f1:.4f}")
+        col5.metric("AUC Score", f"{auc:.4f}")
+        col6.metric("MCC Score", f"{mcc:.4f}")
 
-        # -----------------------------------------------------
-        # Confusion Matrix (Requirement d)
-        # -----------------------------------------------------
         st.markdown('<p class="section-title">📌 Confusion Matrix</p>', unsafe_allow_html=True)
 
         cm = confusion_matrix(y, predictions)
