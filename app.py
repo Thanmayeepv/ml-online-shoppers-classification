@@ -66,7 +66,7 @@ model_choice = st.sidebar.selectbox(
 model_paths = {
     "Logistic Regression": "model/logistic_model.pkl",
     "Decision Tree": "model/decision_tree_model.pkl",
-    "Random Forest": "model/random_forest_model.pkl",
+    "Random Forest": "model/Random_Forest_model.pkl",
     "KNN": "model/knn_model.pkl",
     "Naive Bayes": "model/naive_bayes_model.pkl",
     "XGBoost": "model/xgboost_model.pkl",
