@@ -2,8 +2,8 @@
 
 ## 1. Problem Statement
 
-The goal of this project is to forecast if the user of an online shopping site will buy a product or not.
-The problem is as a binary classification problem, in which the target variable of interest is **Revenue**—where 1 represents **Purchase** and 0 represents **No Purchase**.
+The goal of this project is to predict whether a user of an online shopping site will make a purchase or not.
+The problem is formulated as a binary classification problem, in which the target variable of interest is **Revenue**—where 1 represents **Purchase** and 0 represents **No Purchase**.
 
 ---
 
@@ -14,6 +14,10 @@ The problem is as a binary classification problem, in which the target variable 
 - Number of Instances: 12,330
 - Number of Features: 17 input features + 1 target variable
 - Target Variable: Revenue (True/False)
+- Class Distribution:
+  - No Purchase (0): 10,422 instances
+  - Purchase (1): 1,908 instances
+  - The dataset is imbalanced (~15% positive class).
 
 The data set appears to include information on the browsing patterns of users, such as visits to pages, the duration of time spent on specific pages, the percentage of visits with high bounce rates, exit rates, the month of the visit, type of visitors, etc.
 
@@ -24,9 +28,9 @@ The data set appears to include information on the browsing patterns of users, s
 The following classification models are implemented:
 
 1. Logistic Regression
-2. Decision Tree Classifi er
-3. K-Nearest Neighbor Classifi er
-4. Naive Bayes Classifi er - Gaussian or Multinomial
+2. Decision Tree Classifier
+3. K-Nearest Neighbor Classifier
+4. Naive Bayes Classifier - Gaussian
 5. Ensemble Model - Random Forest
 6. Ensemble Model - XGBoost
 
@@ -36,7 +40,7 @@ Evaluation Metrics used are as follows:
 3. Precision
 4. Recall
 5. F1 Score
-6. Matthews Correlation Coeffi cient (MCC Score)
+6. Matthews Correlation Coefficient (MCC Score)
 
 ---
 
@@ -48,7 +52,7 @@ Evaluation Metrics used are as follows:
 | Decision Tree        | 0.8528   | 0.7290 | 0.5237    | 0.5497  | 0.5364   | 0.4492 |
 | K-Nearest Neighbors  | 0.8678   | 0.7888 | 0.6217    | 0.3743  | 0.4673   | 0.4138 |
 | Naive Bayes          | 0.8439   | 0.8152 | 0.4963    | 0.5236  | 0.5096   | 0.417  |
-| Random Forest        | 0.8998   | 0.9178 | 0.732     | 0.5576  | 0.633    | 0.5834 |
+| Random Forest        | 0.8998   | 0.9179 | 0.732     | 0.5576  | 0.633    | 0.5834 |
 | XGBoost              | 0.8796   | 0.9129 | 0.5955    | 0.6437  | 0.6409   | 0.5714 |
 
 
@@ -64,3 +68,7 @@ Evaluation Metrics used are as follows:
 | **Naive Bayes**               | Achieved accuracy of 0.8439 with relatively balanced precision (0.4963) and recall (0.5236). The AUC score (0.8152) indicates reasonable class discrimination. MCC (0.4170) reflects moderate predictive reliability despite the model’s strong independence assumptions.                                                                                                         |
 | **Random Forest (Ensemble)**  | Delivered the highest accuracy (0.8998) and highest AUC (0.9179), demonstrating superior class discrimination. It also achieved the highest MCC (0.5834), indicating strong balanced classification performance. This confirms the advantage of ensemble learning in improving generalization.                                                                                    |
 | **XGBoost (Ensemble)**        | Achieved the highest recall (0.6437) and highest F1 score (0.6409), indicating strong detection of positive cases with balanced performance. The MCC (0.5714) is close to Random Forest, showing robust predictive capability. Although accuracy (0.8796) is slightly lower than Random Forest, its higher recall makes it effective when identifying positive cases is critical. |
+
+## 6. Final Model Selection
+
+Based on overall evaluation metrics, Random Forest was selected as the best-performing model due to its highest AUC (0.9179) and MCC (0.5834), indicating superior balanced predictive performance on the imbalanced dataset.
