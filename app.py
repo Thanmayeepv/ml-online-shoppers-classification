@@ -124,7 +124,7 @@ if uploaded_file is not None:
 
         cm = confusion_matrix(y, predictions)
 
-        fig, ax = plt.subplots(figsize=(4,4))
+        fig, ax = plt.subplots(figsize=(4,3))
         sns.heatmap(
             cm,
             annot=True,
@@ -132,11 +132,11 @@ if uploaded_file is not None:
             cmap="Blues",
             xticklabels=["Predicted: No", "Predicted: Yes"],
             yticklabels=["Actual: No", "Actual: Yes"],
-            annot_kws={"size":12},
             ax=ax
         )
         plt.ylabel("Actual")
         plt.xlabel("Predicted")
+        plt.tight_layout()
         st.pyplot(fig)
 
 else:
